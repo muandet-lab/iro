@@ -8,9 +8,9 @@
 * Free software: MIT License
 
 #### Reference
-Our IRO framework is, at its core, based on the ICML24 paper "Domain Generalisation via Imprecise Learning".
+Our IRO framework is, at its core, based on the ICML'24 paper "Domain Generalisation via Imprecise Learning".
 
-> . [*"Domain Generalisation via Imprecise Learning."* ICML2024.](https://arxiv.org/abs/2404.04669) (Anurag Singh, Siu Lun Chau, Shahine Bouabid, Krikamol Muandet)
+> [*"Domain Generalisation via Imprecise Learning."* ICML2024.](https://arxiv.org/abs/2404.04669) (Anurag Singh, Siu Lun Chau, Shahine Bouabid, Krikamol Muandet)
 
 ## Features
 
