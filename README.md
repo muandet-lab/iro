@@ -5,14 +5,8 @@
 
 A Python library for Imprecise Risk Optimization, providing risk measures and optimization algorithms under uncertainty.
 
-* PyPI package: https://pypi.org/project/iro/
 * Free software: MIT License
-* Documentation: https://iro.readthedocs.io.
 
 ## Features
 
 * TODO
-
-## Credits
-
-This package was created with [Cookiecutter](https://github.com/audreyfeldroy/cookiecutter) and the [audreyfeldroy/cookiecutter-pypackage](https://github.com/audreyfeldroy/cookiecutter-pypackage) project template.
