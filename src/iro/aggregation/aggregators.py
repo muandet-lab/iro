@@ -1,6 +1,6 @@
 import numpy as np
 
-class aggregation_function:
+class AggregationFunction:
     """ This class aggregates the risks using different risk measures. """
 
     def __init__(self, name: str):
