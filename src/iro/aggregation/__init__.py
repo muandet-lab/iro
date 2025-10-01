@@ -1,5 +1,5 @@
-from .aggregators import aggregation_function
+from iro.aggregation.aggregators import AggregationFunction
 
 __all__ = [
-    "aggregation_function",
+    "AggregationFunction",
 ]
