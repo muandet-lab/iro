@@ -22,7 +22,11 @@ Currently implemented aggregation functions for risk include:
 - **Mean (expected risk)**  
 - **Worst-case risk**  
 - **Median (robust alternative to mean)**  
-- **Variance (penalizing spread)**  
+- **Variance (penalizing spread)**
+- **Proportional hazard risk measure**
+- **Wang risk measure**
+
+* See https://en.wikipedia.org/wiki/Coherent_risk_measure for more information.
 
 Other planned features:
 
