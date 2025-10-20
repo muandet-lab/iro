@@ -12,7 +12,9 @@ def generate_sample_risks(num_domains=100, distribution='lognormal'):
     if distribution == 'normal':
         risks = np.random.normal(loc=1.5, scale=0.5, size=num_domains)
         risks = np.abs(risks) + np.random.uniform(0, 0.5, size=num_domains)
-    elif distribution == 'lognormal':
+    elif distribution == 'lognormal': # The lognormal distribution option 
+        # is particularly useful because it creates a positively skewed distribution 
+        # with a long tail, which is a common characteristic of risk data in finance and other fields
         risks = np.random.lognormal(mean=0.5, sigma=0.4, size=num_domains)
     else:
         raise ValueError("Unsupported distribution type.")
@@ -49,7 +51,7 @@ def visualize_aggregations(risk_distribution, aggregation_functions):
             color = cmap(norm(param_value))
 
             # Generate a new, slightly different set of risks for each iteration
-            # This simulates the behavior of your original notebook code
+            # This simulates the original notebook code from https://github.com/muandet-lab/dgil
             # where risks were calculated for a different model each time.
             current_risks = generate_sample_risks(num_domains=100, distribution='lognormal')
             
