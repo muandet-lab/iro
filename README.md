@@ -26,13 +26,11 @@ Currently implemented aggregation functions for risk include:
 - **Proportional hazard risk measure**
 - **Wang risk measure**
 
-* See https://en.wikipedia.org/wiki/Coherent_risk_measure for more information.
+* See https://en.wikipedia.org/wiki/Coherent_risk_measure and https://doi.org/10.1111/1467-9965.00068 for more information regarding risk measures.
 
-Other planned features:
+## Examples
+The `examples` module contains examples which demonstrate the behavior of risk aggregation functions when applied to both synthetically generated data as well as [Fisher's Iris dataset](https://archive.ics.uci.edu/dataset/53/iris) and [UCI Default of Credit Card Clients.](https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients)
 
-- Full support for **imprecise/domain-adaptive (risk) optimization algorithms**  
-- Integration with **multiple dataset environments** for domain generalization  
-- Extensive documentation and tutorials  
 
 ## Installation
 
