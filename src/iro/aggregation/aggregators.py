@@ -164,7 +164,8 @@ class AggregationFunction:
         weights = norm_cdf(norm_ppf(i / (n + 1)) + norm_ppf(1 - alpha))
         weights = weights / weights.sum()
         return torch.sum(weights * risks_sorted)
-    
+
+    '''
     def __soft_cvar__(self, risks: torch.Tensor, alpha: float, eta: float) -> torch.Tensor:
         """Differentiable smooth CVaR approximation using softmax weights."""
         n = risks.numel()
@@ -177,6 +178,4 @@ class AggregationFunction:
         weights_raw[k:] = eta * risks_sorted[k:].min() - 1000.0  # very small weight for tail beyond k
         weights = torch.softmax(weights_raw, dim=0)
         return torch.sum(weights * risks_sorted)
-    
-
-    # want users to be able to define their own aggregation functions (could use self.name=="custom" and pass a function handle)
+    '''
