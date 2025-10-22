@@ -148,11 +148,6 @@ class AggregationFunction:
         """Proportional Hazard risk measure with transform g(x) = x^xi."""
         return torch.mean(risks ** xi)
 
-    def __g_entropic__(self, risks: torch.Tensor, eta: float) -> torch.Tensor:
-        """Placeholder for g-entropic risk measures."""
-        # Placeholder implementation; user should override or extend
-        return (1.0 / eta) * torch.log(torch.mean(torch.exp(eta * risks)))
-
     def __wang__(self, risks: torch.Tensor, alpha: float) -> torch.Tensor:
         """Wang risk measure using standard normal CDF and inverse."""
         # Implement standard normal CDF and inverse using torch.erf and erfinv
