@@ -79,16 +79,10 @@ class AggregationFunction:
             return self.__median__(risks)
         elif self.name == "variance":
             return self.__variance__(risks)
-        elif self.name == "tail_var":
-            return self.__tail_var__(risks, alpha)
         elif self.name == "ph":
             return self.__ph__(risks, xi)
-        elif self.name == "g_entropic":
-            return self.__g_entropic__(risks, eta)
         elif self.name == "wang":
             return self.__wang__(risks, alpha)
-        elif self.name == "soft_cvar":
-            return self.__soft_cvar__(risks, alpha, eta)
         else:
             raise NotImplementedError(f"Aggregation function '{self.name}' not implemented.")
     
@@ -138,11 +132,6 @@ class AggregationFunction:
         """Variance as a risk measure (penalizing spread)."""
         mean = risks.mean()
         return ((risks - mean) ** 2).mean()
-
-    def __tail_var__(self, risks: torch.Tensor, alpha: float) -> torch.Tensor:
-        """Tail Value at Risk using g(x) = min(x/alpha, 1)."""
-        g = torch.minimum(risks / alpha, torch.tensor(1.0, dtype=risks.dtype, device=risks.device))
-        return torch.mean(g * risks)
 
     def __ph__(self, risks: torch.Tensor, xi: float) -> torch.Tensor:
         """Proportional Hazard risk measure with transform g(x) = x^xi."""
