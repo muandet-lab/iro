@@ -3,7 +3,7 @@
 ![PyPI version](https://img.shields.io/badge/PyPI-not%20published-yellow)
 [![Documentation Status](https://readthedocs.org/projects/iro/badge/?version=latest)](https://iro.readthedocs.io/en/latest/)
 
-**iro** is a Python library for Imprecise Risk Optimization (IRO), providing tools for risk aggregation and optimization under uncertainty. It implements ideas from the domain generalization literature, enabling robust learning across multiple environments.
+**iro** is a Python library for Imprecise Risk Optimization (IRO) which provides tools for risk aggregation and optimization under uncertainty. **iro** leverages an imprecise learning setup to allow users to state their generalisation preferences at test-time.
 
 * Free software: MIT License
 
@@ -16,15 +16,12 @@ Our IRO framework is, at its core, based on the ICML'24 paper "Domain Generalisa
 
 Currently implemented aggregation functions for risk include:
 
-- **Conditional Value-at-Risk (CVaR)**  
-- **Value-at-Risk (VaR)**  
-- **Entropic risk measure**  
-- **Mean (expected risk)**  
-- **Worst-case risk**  
-- **Median (robust alternative to mean)**  
-- **Variance (penalizing spread)**
-- **Proportional hazard risk measure**
-- **Wang risk measure**
+- **Conditional Value-at-Risk (CVaR)** (and **Value-at-Risk**)  
+- **Entropic** and **generalized entropic** risk measures  
+- **Entropic Value-at-Risk (EVaR)**
+- **Spectral risk measures** (including a dedicated **exponential spectral** family with Arrow-Pratt aversion control)  
+- **Mean**, **median**, **variance**, and **worst-case** risk  
+- **Proportional hazard** and **Wang** risk measures
 
 * See https://en.wikipedia.org/wiki/Coherent_risk_measure and https://doi.org/10.1111/1467-9965.00068 for more information regarding risk measures.
 
