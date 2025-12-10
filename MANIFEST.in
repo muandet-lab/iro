@@ -1,0 +1,9 @@
+include CONTRIBUTING.md
+include HISTORY.md
+include LICENSE
+include README.md
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+
+recursive-include docs *.md Makefile *.jpg *.png *.gif
