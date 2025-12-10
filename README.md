@@ -15,7 +15,6 @@ Our IRO framework is, at its core, based on the ICML'24 paper "Domain Generalisa
 Conditional Value at Risk (CVaR) is the base risk measure for iro. The framework is however designed to be risk measure-agnostic and a core feature of iro is the implementation of further risk measures, (as of now) including
 
 * [Exponential Spectral Risk Measure](https://doi.org/10.48550/arXiv.1103.5409) which takes a risk aversion parameter value at test-time, preceded by an imprecise training flow.
-* Entropic Value-at-Risk (EVaR) and a spectral/Arrow-Pratt risk interface, with a pluggable aggregation API for adding more measures.
 
 See https://en.wikipedia.org/wiki/Coherent_risk_measure and https://doi.org/10.1111/1467-9965.00068 for more information regarding risk measures.
 
