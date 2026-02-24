@@ -17,7 +17,10 @@ This repository now includes templates that enforce those defaults.
 
 - `scripts/cispa/iro_train_cispa.sbatch`
 - `scripts/cispa/overrides/cmnist_paper_repro.txt`
+- `scripts/cispa/overrides/cmnist_full_grid_base.txt`
 - `scripts/cispa/submit_cmnist_repro_array.sh`
+- `scripts/cispa/submit_cmnist_full_grid.sh`
+- `scripts/cispa/collect_cmnist_table.py`
 
 ## Prerequisites on CISPA
 
@@ -60,6 +63,44 @@ IRO_REPO_ROOT=$HOME/CISPA-projects/iro \
 IRO_DATA_ROOT=$HOME/CISPA-projects/datasets/cmnist \
 MAIL_USER=<your_cispa_email> \
 ./scripts/cispa/submit_cmnist_repro_array.sh
+```
+
+## Full multi-algorithm CMNIST sweep (Table-style reproduction)
+
+Preview all array submissions without launching:
+
+```bash
+cd /path/to/iro
+DRY_RUN=1 \
+ARRAY_RANGE=0-9 \
+IRO_REPO_ROOT=$HOME/CISPA-projects/iro \
+IRO_DATA_ROOT=$HOME/CISPA-projects/datasets/cmnist \
+MAIL_USER=<your_cispa_email> \
+./scripts/cispa/submit_cmnist_full_grid.sh
+```
+
+Submit the full sweep:
+
+```bash
+cd /path/to/iro
+DRY_RUN=0 \
+ARRAY_RANGE=0-9 \
+IRO_REPO_ROOT=$HOME/CISPA-projects/iro \
+IRO_DATA_ROOT=$HOME/CISPA-projects/datasets/cmnist \
+MAIL_USER=<your_cispa_email> \
+IRO_EXP_NAME_PREFIX=cmnist_reproduce \
+IRO_RESULTS_ARCHIVE_DIR=$HOME/CISPA-work/$USER/iro_results/cmnist_reproduce \
+./scripts/cispa/submit_cmnist_full_grid.sh
+```
+
+Collect the table from run artifacts:
+
+```bash
+python scripts/cispa/collect_cmnist_table.py \
+  $HOME/CISPA-work/$USER/iro_results/cmnist_reproduce \
+  --model-selection-env 0.9 \
+  --model-selection-type best \
+  --test-envs all
 ```
 
 ## Tuning resources safely

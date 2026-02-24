@@ -1,0 +1,15 @@
+# Base CMNIST setup used for full DGIL-style comparison sweeps.
+training.lr=1e-4
+data.batch_size=25000
+model.hidden_sizes=[390]
+model.dropout=0.2
+training.eval_freq=50
+training.loss_fn=nll
+iro.alpha=0.4
+
+data.cmnist_train_envs=[0.01,0.12,0.0,0.0,0.99,0.5,0.7,0.01,0.0,0.0,0.14]
+data.cmnist_test_envs=[0.1,0.5,0.9]
+data.cmnist_test_env_ms=0.9
+data.cmnist_label_noise_rate=0.25
+data.cmnist_subsample=true
+data.cmnist_use_test_set=false
