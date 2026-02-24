@@ -5,6 +5,7 @@
 - [Readme](readme.md)
 - [Installation](installation.md)
 - [Usage](usage.md)
+- [CISPA Cluster](cispa_cluster.md)
 - [Modules](modules.md)
 - [Contributing](contributing.md)
 - [History](history.md)
