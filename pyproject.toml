@@ -4,10 +4,10 @@ version = "0.1.0"
 description = "A Python library for Imprecise Risk Optimization, providing risk measures and optimization algorithms under uncertainty."
 readme = "README.md"
 authors = [
-  {name = "Joseph C. Sheils", email = "joseph.sheils@example.com"}
+  {name = "Joseph C. Sheils", email = "joseph.sheils@cispa.de"}
 ]
 maintainers = [
-  {name = "Joseph C. Sheils", email = "joseph.sheils@example.com"}
+  {name = "Joseph C. Sheils", email = "joseph.sheils@cispa.de"}
 ]
 classifiers = [
     # TODO
@@ -35,9 +35,9 @@ test = [
 ]
 
 [project.urls]
-bugs = "https://github.com/jcsheils/iro/issues"
-changelog = "https://github.com/jcsheils/iro/blob/master/changelog.md"
-homepage = "https://github.com/jcsheils/iro"
+bugs = "https://github.com/muandet-lab/iro/issues"
+changelog = "https://github.com/muandet-lab/iro/blob/master/changelog.md"
+homepage = "https://github.com/muandet-lab/iro"
 
 [project.scripts]
 iro = "iro.cli:app"
