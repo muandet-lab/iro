@@ -1,38 +1,37 @@
 # Installation
 
-## Stable release
+## From Source
 
-To install Imprecise Risk Optimization, run this command in your terminal:
-
-```sh
-uv add iro
-```
-
-Or if you prefer to use `pip`:
-
-```sh
-pip install iro
-```
-
-## From source
-
-The source files for Imprecise Risk Optimization can be downloaded from the [Github repo](https://github.com/jcsheils/iro).
-
-You can either clone the public repository:
-
-```sh
-git clone git://github.com/jcsheils/iro
-```
-
-Or download the [tarball](https://github.com/jcsheils/iro/tarball/master):
-
-```sh
-curl -OJL https://github.com/jcsheils/iro/tarball/master
-```
-
-Once you have a copy of the source, you can install it with:
-
-```sh
+```bash
+git clone https://github.com/muandet-lab/iro.git
 cd iro
-uv pip install .
+pip install -e .
+```
+
+## Verify Installation
+
+```bash
+python -m iro --help
+```
+
+You should see commands:
+- `train`
+- `eval`
+
+## Artifact Defaults
+
+After `python -m iro train ...`, artifacts are written under `./iro_exp` by default:
+- `logs/reproduce/out.txt`
+- `logs/reproduce/err.txt`
+- `results/reproduce/<run_id>.jsonl`
+- `ckpts/<run_id>_final.pkl`
+- `ckpts/<run_id>_best.pkl`
+
+Evaluate a checkpoint:
+
+```bash
+python -m iro eval --experiment cmnist_iro \
+  -o eval.checkpoint_path=./iro_exp/ckpts/<run_id>_final.pkl \
+  -o eval.split=test \
+  -o eval.alpha=1.0
 ```

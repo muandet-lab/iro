@@ -203,3 +203,26 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# macOS metadata
+.DS_Store
+
+# Project-local data and experiment artifacts
+data/
+iro_exp/
+iro_exp*/
+outputs/
+tmp/
+tmp_runs/
+slurm-*.out
+
+# Temporary experiment allowlist: keep only CMNIST + CivilComments variants
+config/experiments/*
+!config/experiments/cmnist_film_iro.yaml
+!config/experiments/wilds_civilcomments_iro.yaml
+
+iro/examples/*
+!iro/examples/__init__.py
+!iro/examples/_io.py
+!iro/examples/cmnist_film_iro.py
+!iro/examples/wilds_civilcomments_iro.py

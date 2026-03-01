@@ -4,17 +4,24 @@ version = "0.1.0"
 description = "A Python library for Imprecise Risk Optimization, providing risk measures and optimization algorithms under uncertainty."
 readme = "README.md"
 authors = [
-  {name = "Joseph C. Sheils", email = "joseph.sheils@cispa.de"}
+  {name = "Joseph C. Sheils", email = "joseph.sheils@example.com"}
 ]
 maintainers = [
-  {name = "Joseph C. Sheils", email = "joseph.sheils@cispa.de"}
+  {name = "Joseph C. Sheils", email = "joseph.sheils@example.com"}
 ]
 classifiers = [
     # TODO
 ]
 license = {text = "MIT"}
 dependencies = [
-  "typer"
+  "hydra-core>=1.3",
+  "numpy>=1.24",
+  "omegaconf>=2.3",
+  "pyyaml>=6.0",
+  "scipy>=1.10",
+  "torch>=2.1",
+  "torchvision>=0.16",
+  "typer>=0.9"
 ]
 requires-python = ">= 3.10"
 
@@ -34,6 +41,18 @@ homepage = "https://github.com/jcsheils/iro"
 
 [project.scripts]
 iro = "iro.cli:app"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["iro*"]
+namespaces = false
 
 [tool.ty]
 # All rules are enabled as "error" by default; no need to specify unless overriding.

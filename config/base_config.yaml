@@ -1,0 +1,78 @@
+defaults:
+  - _self_
+  - experiments: cmnist_iro
+
+experiment: cmnist_iro
+
+master_seed: 42
+
+training:
+  seed: 0
+  device: auto
+  deterministic: false
+  epochs: 30
+  steps: null
+  lr: 2.0e-4
+  lr_factor_reduction: 1.0
+  lr_cos_sched: false
+  weight_decay: 0.0
+  erm_pretrain_iters: 0
+  eval_freq: 50
+  loss_fn: nll
+  output_root: ./iro_exp
+  exp_name: reproduce
+  save_ckpts: true
+  capture_logs: true
+  write_artifacts: true
+
+iro:
+  algorithm: iro
+  penalty_weight: 1000.0
+  groupdro_eta: 1.0
+  alpha: 0.8
+
+model:
+  name: filmedmlp
+  hidden_sizes: [390]
+  dropout: 0.2
+
+data:
+  source: cmnist
+  dataset_name: cmnist
+  root: data/cmnist
+  download: false
+  batch_size: 16
+  num_workers: 0
+  cmnist_train_envs: [0.1, 0.2]
+  cmnist_test_envs: [0.9]
+  cmnist_test_env_ms: 0.9
+  cmnist_label_noise_rate: 0.25
+  cmnist_subsample: true
+  cmnist_use_test_set: false
+
+eval:
+  checkpoint_path: ""
+  alpha: 0.8
+  split: test
+  batch_size: null
+
+executor:
+  exec_name: experiment
+  output_dir: outputs
+  log_dir: outputs/logs
+
+slurm:
+  cores: 1
+  nodes: 1
+  time: "0-00:30"
+  memory: 5G
+  partition: cpu-batch
+  account: ""
+  email: ""
+  email_type: FAIL
+  log_dir: outputs/slurm_logs
+  job_name: experiment
+  exclude: ""
+  constraint: ""
+  gres: ""
+  julia_path: ~/.juliaup/bin
