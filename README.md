@@ -1,6 +1,6 @@
 # IRO: Imprecise Risk Optimization
 
-`iro` is a Python library for Imprecise Risk Optimization (IRO), an optimization paradigm which allows users to maintain non-committal generalization preferences during training, allowing test-time flexibility of user choices at test time.
+`iro` is a Python library for Imprecise Risk Optimization (IRO), an optimization paradigm which allows users to maintain non-committal generalization preferences during training, providing test-time flexibility of user choices at test time.
 
 Our framework, at its core, is built upon the ICML 2024 paper [Domain Generalisation via Imprecise Learning](https://arxiv.org/abs/2404.04669) by Anurag Singh, Siu Lun Chau, Shahine Bouabid, and Krikamol Muandet.
 
