@@ -31,6 +31,9 @@ export PYTHONDONTWRITEBYTECODE=1
 : "${IRO_WORKSPACE_DURATION:=7 00:00:00}"
 : "${IRO_EXP_NAME:=cispa_${IRO_EXPERIMENT}}"
 : "${IRO_OVERRIDES_FILE:=}"
+: "${IRO_EXTRA_OVERRIDES:=}"
+: "${IRO_RESULTS_ARCHIVE_DIR:=}"
+: "${IRO_ENV_ACTIVATE:=}"
 
 if [[ -z "${IRO_SEED:-}" && -n "${SLURM_ARRAY_TASK_ID:-}" ]]; then
   IRO_SEED="${SLURM_ARRAY_TASK_ID}"
@@ -60,12 +63,27 @@ sync_artifacts() {
     mkdir -p "${JOBDATADIR}/job_tmp"
     rsync -a "${JOBTMPDIR}/" "${JOBDATADIR}/job_tmp/" || true
   fi
+  if [[ -n "${IRO_RESULTS_ARCHIVE_DIR}" ]]; then
+    mkdir -p "${IRO_RESULTS_ARCHIVE_DIR}" || true
+    if [[ -d "${JOBTMPDIR}/iro_exp/results/${IRO_EXP_NAME}" ]]; then
+      find "${JOBTMPDIR}/iro_exp/results/${IRO_EXP_NAME}" -maxdepth 1 -type f -name '*.jsonl' -exec cp -f {} "${IRO_RESULTS_ARCHIVE_DIR}/" \; || true
+    fi
+  fi
   echo "Workspace artifacts: ${JOBDATADIR}"
   return ${status}
 }
 trap sync_artifacts EXIT
 
 cd "${IRO_REPO_ROOT}"
+
+if [[ -n "${IRO_ENV_ACTIVATE}" ]]; then
+  if [[ ! -f "${IRO_ENV_ACTIVATE}" ]]; then
+    echo "ERROR: IRO_ENV_ACTIVATE points to a missing file: ${IRO_ENV_ACTIVATE}" >&2
+    exit 1
+  fi
+  # shellcheck source=/dev/null
+  source "${IRO_ENV_ACTIVATE}"
+fi
 
 cmd=(
   python -m iro train
@@ -91,6 +109,16 @@ if [[ -n "${IRO_OVERRIDES_FILE}" ]]; then
     [[ "${override}" =~ ^# ]] && continue
     cmd+=( -o "${override}" )
   done < "${IRO_OVERRIDES_FILE}"
+fi
+
+if [[ -n "${IRO_EXTRA_OVERRIDES}" ]]; then
+  IFS=';' read -r -a extra_overrides <<< "${IRO_EXTRA_OVERRIDES}"
+  for raw_override in "${extra_overrides[@]}"; do
+    override="$(echo "${raw_override}" | xargs)"
+    [[ -z "${override}" ]] && continue
+    [[ "${override}" =~ ^# ]] && continue
+    cmd+=( -o "${override}" )
+  done
 fi
 
 echo "Launching on host $(hostname)"
