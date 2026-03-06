@@ -6,6 +6,7 @@
 - [Installation](installation.md)
 - [Usage](usage.md)
 - [SLURM Cluster](slurm_cluster.md)
+- [Workspace Cluster](workspace_cluster.md)
 - [Modules](modules.md)
 - [Contributing](contributing.md)
 - [History](history.md)

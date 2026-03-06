@@ -208,21 +208,22 @@ __marimo__/
 .DS_Store
 
 # Project-local data and experiment artifacts
-data/
-iro_exp/
-iro_exp*/
-outputs/
-tmp/
-tmp_runs/
-slurm-*.out
+/data/
+/iro_exp/
+/iro_exp*/
+/outputs/
+/tmp/
+/tmp_runs/
+/slurm-*.out
 
-# Temporary experiment allowlist: keep only CMNIST + CivilComments variants
+# Keep generated benchmark data out of git (package code under iro/data stays tracked)
+iro/data/camelyon17_v1.0/
+
+# Temporary experiment allowlist: keep only active examples
 config/experiments/*
-!config/experiments/cmnist_film_iro.yaml
-!config/experiments/wilds_civilcomments_iro.yaml
+!config/experiments/cmnist_iro.yaml
 
 iro/examples/*
 !iro/examples/__init__.py
 !iro/examples/_io.py
-!iro/examples/cmnist_film_iro.py
-!iro/examples/wilds_civilcomments_iro.py
+!iro/examples/cmnist_iro.py

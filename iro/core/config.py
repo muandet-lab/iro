@@ -62,9 +62,18 @@ class DataConfig:
     source: str = "cmnist"
     dataset_name: str = "cmnist"
     root: str = "data/cmnist"
+    root_dir: str = ""
+    data_dir: str = ""
     download: bool = False
     batch_size: int = 16
     num_workers: int = 0
+    iwildcam_eval_split: str = "all"
+    n_envs_per_batch: int = 4
+    uniform_over_groups: bool = True
+    debug_data: bool = False
+    debug_train_size: int = 256
+    debug_eval_size: int = 128
+    debug_group_limit: int = 0
     cmnist_train_envs: list[float] | str = field(default_factory=lambda: [0.1, 0.2])
     cmnist_test_envs: list[float] | str = field(default_factory=lambda: [0.9])
     cmnist_test_env_ms: float = 0.9

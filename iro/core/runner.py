@@ -24,12 +24,30 @@ def _eval_cmnist(cfg: ExperimentConfig) -> dict[str, Any]:
     return eval_cmnist_iro(cfg)
 
 
+def _train_iwildcam(cfg: ExperimentConfig) -> dict[str, Any]:
+    from iro.training import train_iwildcam_iro
+
+    return train_iwildcam_iro(cfg)
+
+
+def _eval_iwildcam(cfg: ExperimentConfig) -> dict[str, Any]:
+    from iro.training import eval_iwildcam_iro
+
+    return eval_iwildcam_iro(cfg)
+
+
 EXPERIMENT_REGISTRY: dict[str, dict[str, Any]] = {
     "cmnist_iro": {
         "source": "cmnist",
         "dataset": "cmnist",
         "trainer": _train_cmnist,
         "evaluator": _eval_cmnist,
+    },
+    "iwildcam_iro": {
+        "source": "iwildcam",
+        "dataset": "iwildcam",
+        "trainer": _train_iwildcam,
+        "evaluator": _eval_iwildcam,
     },
 }
 

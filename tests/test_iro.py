@@ -97,8 +97,8 @@ def test_fhat_and_hypernetwork_shapes() -> None:
     assert logits.shape == (32, 3)
 
 
-def test_supported_experiments_only_cmnist() -> None:
-    assert supported_experiments() == ("cmnist_iro",)
+def test_supported_experiments_include_cmnist_and_iwildcam() -> None:
+    assert supported_experiments() == ("cmnist_iro", "iwildcam_iro")
 
 
 def test_run_training_requires_experiment() -> None:
@@ -152,6 +152,16 @@ def test_cmnist_experiment_config_loads() -> None:
     assert cfg.iro.penalty_weight == 1000.0
     assert cfg.iro.groupdro_eta == 1.0
     assert cfg.iro.alpha == 0.4
+
+
+def test_iwildcam_experiment_config_loads() -> None:
+    cfg = load_experiment_config("iwildcam_iro")
+    assert cfg.data.source == "iwildcam"
+    assert cfg.data.dataset_name == "iwildcam"
+    assert cfg.data.iwildcam_eval_split == "all"
+    assert cfg.data.n_envs_per_batch == 4
+    assert cfg.model.name == "film_resnet18"
+    assert cfg.training.loss_fn == "cross_ent"
 
 
 def test_master_seed_defaults_to_training_seed() -> None:

@@ -83,3 +83,25 @@ def test_cli_eval_prints_cmnist_metrics(monkeypatch) -> None:
     assert "dataset=cmnist device=cpu split=test" in result.output
     assert "env=0.1 alpha=0.8 acc=0.750000 loss=0.600000" in result.output
     assert "env=0.9 alpha=0.8 acc=0.550000 loss=0.900000" in result.output
+
+
+def test_cli_eval_prints_iwildcam_metrics(monkeypatch) -> None:
+    monkeypatch.setattr(train_cli_mod, "load_experiment_config", lambda **_kwargs: _fake_cfg())
+    monkeypatch.setattr(
+        train_cli_mod,
+        "evaluate_from_config",
+        lambda cfg, experiment: {
+            "dataset": "iwildcam",
+            "device": "cpu",
+            "split": "val,test",
+            "metrics": [
+                {"split": "val", "alpha": 0.8, "accuracy": 0.44, "macro_recall": 0.33, "macro_f1": 0.22},
+                {"split": "test", "alpha": 0.8, "accuracy": 0.40, "macro_recall": 0.30, "macro_f1": 0.20},
+            ],
+        },
+    )
+
+    result = runner.invoke(app, ["eval", "--experiment", "cmnist_iro"])
+    assert result.exit_code == 0
+    assert "dataset=iwildcam device=cpu split=val,test" in result.output
+    assert "split=val alpha=0.8 acc=0.440000 macro_recall=0.330000 macro_f1=0.220000" in result.output

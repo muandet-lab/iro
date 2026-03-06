@@ -17,6 +17,7 @@ __all__ = [
     "HyperNetwork",
     "FiLMLayer",
     "FiLMClassifierHead",
+    "FiLMedResNetClassifier",
 ]
 
 
@@ -26,7 +27,7 @@ def __getattr__(name: str) -> Any:
     if name in {"Nonparametric", "get_grad_norm"}:
         module = import_module("iro.utility.kde")
         return getattr(module, name)
-    if name in {"FHatNetwork", "HyperNetwork", "FiLMLayer", "FiLMClassifierHead"}:
+    if name in {"FHatNetwork", "HyperNetwork", "FiLMLayer", "FiLMClassifierHead", "FiLMedResNetClassifier"}:
         module = import_module("iro.utility.networks")
         return getattr(module, name)
     raise AttributeError(f"module 'iro.utility' has no attribute '{name}'")

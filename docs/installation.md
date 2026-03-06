@@ -35,3 +35,12 @@ python -m iro eval --experiment cmnist_iro \
   -o eval.split=test \
   -o eval.alpha=1.0
 ```
+
+iWildCam-WILDS evaluation:
+
+```bash
+python -m iro eval --experiment iwildcam_iro \
+  -o eval.checkpoint_path=./iro_exp/ckpts/<run_id>_best.pkl \
+  -o eval.split=all \
+  -o eval.alpha=0.8
+```

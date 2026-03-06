@@ -12,6 +12,7 @@ from collections.abc import Sequence
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torchvision.models import ResNet18_Weights, resnet18
 
 
 class FHatNetwork(nn.Module):
@@ -249,3 +250,47 @@ class CNN(nn.Module):
         x = self.pool(F.relu(self.conv2(x)))
         x = self.avg(x).view(x.size(0), -1)
         return self.fc(x)
+
+
+class FiLMedResNetClassifier(nn.Module):
+    """ResNet-18 classifier with optional FiLM modulation of pooled features."""
+
+    def __init__(
+        self,
+        num_classes: int,
+        *,
+        pretrained: bool = False,
+        film_hidden_sizes: Sequence[int] | None = None,
+    ):
+        super().__init__()
+        weights = ResNet18_Weights.IMAGENET1K_V1 if pretrained else None
+        backbone = resnet18(weights=weights)
+        self.feature_extractor = nn.Sequential(*list(backbone.children())[:-1])
+        self.feature_dim = int(backbone.fc.in_features)
+        self.film = FiLMLayer(
+            feature_dim=self.feature_dim,
+            hidden_sizes=film_hidden_sizes or [max(64, self.feature_dim // 8)],
+        )
+        self.classifier = nn.Linear(self.feature_dim, int(num_classes))
+
+    def _alpha_batch(self, x: torch.Tensor, alpha: torch.Tensor | float | None) -> torch.Tensor:
+        if alpha is None:
+            return torch.zeros((x.size(0), 1), device=x.device, dtype=x.dtype)
+        if not torch.is_tensor(alpha):
+            return torch.full((x.size(0), 1), float(alpha), device=x.device, dtype=x.dtype)
+        alpha = alpha.to(device=x.device, dtype=x.dtype)
+        if alpha.ndim == 0:
+            return alpha.view(1, 1).expand(x.size(0), 1)
+        if alpha.ndim == 1:
+            if alpha.size(0) == x.size(0):
+                return alpha.view(-1, 1)
+            return alpha.view(1, -1)[:, :1].expand(x.size(0), 1)
+        if alpha.size(0) == 1 and x.size(0) > 1:
+            return alpha[:, :1].expand(x.size(0), 1)
+        return alpha[:, :1]
+
+    def forward(self, x: torch.Tensor, alpha: torch.Tensor | float | None = None) -> torch.Tensor:
+        features = self.feature_extractor(x).flatten(start_dim=1)
+        if alpha is not None:
+            features = self.film(features, self._alpha_batch(features, alpha))
+        return self.classifier(features)

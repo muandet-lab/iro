@@ -21,7 +21,8 @@ dependencies = [
   "scipy>=1.10",
   "torch>=2.1",
   "torchvision>=0.16",
-  "typer>=0.9"
+  "typer>=0.9",
+  "wilds>=2.0.0"
 ]
 requires-python = ">= 3.10"
 

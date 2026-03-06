@@ -5,7 +5,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 : "${ARRAY_RANGE:=0-9}"
 : "${IRO_REPO_ROOT:=${REPO_ROOT}}"
-: "${IRO_DATA_ROOT:=$HOME/CISPA-projects/datasets/cmnist}"
+: "${IRO_DATA_ROOT:=$HOME/data/cmnist}"
 : "${IRO_WORKSPACE_SHARE:=work}"
 : "${IRO_WORKSPACE_DURATION:=7 00:00:00}"
 : "${IRO_DOWNLOAD:=false}"
