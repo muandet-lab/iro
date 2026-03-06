@@ -1,10 +1,11 @@
 # Usage
 
-This page shows the CMNIST workflow for `iro` from CLI and Python.
+This page shows the CMNIST and iWildCam-WILDS workflows for `iro` from CLI and Python.
 
 ## Supported Experiment
 
 - `cmnist_iro`
+- `iwildcam_iro`
 
 ## CLI Basics
 
@@ -43,6 +44,36 @@ iro eval --experiment cmnist_iro \
   -o eval.alpha=0.8
 ```
 
+Run iWildCam training:
+
+```bash
+iro train --experiment iwildcam_iro \
+  -o data.root=/path/to/iwildcam_root \
+  -o data.download=false \
+  -o iro.algorithm=iro \
+  -o data.n_envs_per_batch=4 \
+  -o data.iwildcam_eval_split=val,test,id_val,id_test
+```
+
+Run iWildCam in debug mode with small subsets:
+
+```bash
+iro train --experiment iwildcam_iro \
+  -o data.root=/path/to/iwildcam_root \
+  -o data.debug_data=true \
+  -o training.steps=2 \
+  -o iro.algorithm=groupdro
+```
+
+Evaluate an iWildCam checkpoint:
+
+```bash
+iro eval --experiment iwildcam_iro \
+  -o eval.checkpoint_path=./iro_exp/ckpts/<run_id>_best.pkl \
+  -o eval.split=all \
+  -o eval.alpha=0.8
+```
+
 ## Common Overrides
 
 - `training.steps=...`
@@ -53,6 +84,10 @@ iro eval --experiment cmnist_iro \
 - `iro.alpha=...`
 - `data.cmnist_train_envs=...`
 - `data.cmnist_test_envs=...`
+- `data.iwildcam_eval_split=val,test,id_val,id_test|all`
+- `data.n_envs_per_batch=...`
+- `data.uniform_over_groups=true|false`
+- `data.debug_data=true|false`
 
 ## Python API
 

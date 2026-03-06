@@ -1,6 +1,6 @@
 # SLURM Cluster Runbook
 
-This guide documents the CMNIST reproduction workflow on a SLURM cluster.
+This guide documents CMNIST and iWildCam workflows on a SLURM cluster.
 
 ## Why This Setup
 
@@ -18,17 +18,20 @@ Cluster workflows usually require:
 - `scripts/submit_cmnist_repro_array.sh`
 - `scripts/submit_cmnist_full_grid.sh`
 - `scripts/collect_cmnist_table.py`
+- `slurm/iwildcam.sbatch`
+- `scripts/submit_iwildcam.sh`
+- `scripts/smoke_iwildcam.sh`
 
 ## Generic Single Run
 
 ```bash
-IRO_REPO_ROOT=$HOME/CISPA-projects/iro \
+IRO_REPO_ROOT=$HOME/projects/iro \
 IRO_EXPERIMENT=cmnist_iro \
-IRO_DATA_ROOT=$HOME/CISPA-projects/datasets/cmnist \
+IRO_DATA_ROOT=$HOME/data/cmnist \
 IRO_EXP_NAME=cmnist_single \
 IRO_SEED=0 \
-IRO_OVERRIDES_FILE=$HOME/CISPA-projects/iro/scripts/overrides/cmnist_paper_repro.txt \
-sbatch $HOME/CISPA-projects/iro/scripts/iro_train_slurm.sbatch
+IRO_OVERRIDES_FILE=$HOME/projects/iro/scripts/overrides/cmnist_paper_repro.txt \
+sbatch $HOME/projects/iro/scripts/iro_train_slurm.sbatch
 ```
 
 ## Paper-Style Seed Array (10 seeds)
@@ -36,8 +39,8 @@ sbatch $HOME/CISPA-projects/iro/scripts/iro_train_slurm.sbatch
 ```bash
 cd /path/to/iro
 ARRAY_RANGE=0-9 \
-IRO_REPO_ROOT=$HOME/CISPA-projects/iro \
-IRO_DATA_ROOT=$HOME/CISPA-projects/datasets/cmnist \
+IRO_REPO_ROOT=$HOME/projects/iro \
+IRO_DATA_ROOT=$HOME/data/cmnist \
 MAIL_USER=<your_email> \
 IRO_SLURM_PARTITION=a100 \
 IRO_SLURM_GRES=gpu:A100:1 \
@@ -52,8 +55,8 @@ Preview submissions:
 cd /path/to/iro
 DRY_RUN=1 \
 ARRAY_RANGE=0-9 \
-IRO_REPO_ROOT=$HOME/CISPA-projects/iro \
-IRO_DATA_ROOT=$HOME/CISPA-projects/datasets/cmnist \
+IRO_REPO_ROOT=$HOME/projects/iro \
+IRO_DATA_ROOT=$HOME/data/cmnist \
 MAIL_USER=<your_email> \
 IRO_SLURM_PARTITION=a100 \
 IRO_SLURM_GRES=gpu:A100:1 \
@@ -69,11 +72,11 @@ Submit sweep:
 cd /path/to/iro
 DRY_RUN=0 \
 ARRAY_RANGE=0-9 \
-IRO_REPO_ROOT=$HOME/CISPA-projects/iro \
-IRO_DATA_ROOT=$HOME/CISPA-projects/datasets/cmnist \
+IRO_REPO_ROOT=$HOME/projects/iro \
+IRO_DATA_ROOT=$HOME/data/cmnist \
 MAIL_USER=<your_email> \
 IRO_EXP_NAME_PREFIX=cmnist_reproduce \
-IRO_RESULTS_ARCHIVE_DIR=$HOME/CISPA-work/$USER/iro_results/cmnist_reproduce \
+IRO_RESULTS_ARCHIVE_DIR=$HOME/results/iro/cmnist_reproduce \
 IRO_SLURM_PARTITION=a100 \
 IRO_SLURM_GRES=gpu:A100:1 \
 ./scripts/submit_cmnist_full_grid.sh
@@ -83,7 +86,7 @@ IRO_SLURM_GRES=gpu:A100:1 \
 
 ```bash
 python scripts/collect_cmnist_table.py \
-  $HOME/CISPA-work/$USER/iro_results/cmnist_reproduce \
+  $HOME/results/iro/cmnist_reproduce \
   --model-selection-env 0.9 \
   --model-selection-type best \
   --test-envs all
@@ -101,4 +104,37 @@ sbatch \
   scripts/iro_train_slurm.sbatch
 ```
 
-Use `IRO_SLURM_PARTITION=r7525` with `IRO_SLURM_GRES=gpu:A100:1` to target the R7525 A100 nodes.
+## iWildCam submit helper (ERM/IRO/GroupDRO)
+
+Preview the submissions:
+
+```bash
+cd /path/to/iro
+DRY_RUN=1 \
+ARRAY_RANGE=0-2 \
+IRO_REPO_ROOT=$HOME/projects/iro \
+IRO_DATA_ROOT=$HOME/data/iwildcam \
+IRO_DEBUG_DATA=1 \
+./scripts/submit_iwildcam.sh
+```
+
+Submit:
+
+```bash
+cd /path/to/iro
+DRY_RUN=0 \
+ARRAY_RANGE=0-9 \
+IRO_REPO_ROOT=$HOME/projects/iro \
+IRO_DATA_ROOT=$HOME/data/iwildcam \
+IRO_DEBUG_DATA=0 \
+./scripts/submit_iwildcam.sh
+```
+
+## iWildCam smoke check
+
+```bash
+cd /path/to/iro
+IRO_DATA_ROOT=$HOME/data/iwildcam \
+IRO_DOWNLOAD=false \
+./scripts/smoke_iwildcam.sh
+```

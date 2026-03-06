@@ -11,7 +11,7 @@
 set -euo pipefail
 
 if ! command -v ws >/dev/null 2>&1; then
-  echo "ERROR: 'ws' command not found. Run this on CISPA CSS login/compute hosts." >&2
+  echo "ERROR: 'ws' command not found. Run this on a workspace-enabled cluster host." >&2
   exit 1
 fi
 
@@ -20,28 +20,29 @@ if ! klist -s; then
   exit 1
 fi
 
-# CISPA-home is read-only on compute nodes; avoid bytecode writes into source trees.
+# Avoid bytecode writes into source trees on restricted filesystems.
 export PYTHONDONTWRITEBYTECODE=1
 
-: "${IRO_EXPERIMENT:=cmnist_film_iro}"
-: "${IRO_REPO_ROOT:=$HOME/CISPA-projects/iro}"
-: "${IRO_DATA_ROOT:=$HOME/CISPA-projects/datasets/cmnist}"
+: "${IRO_EXPERIMENT:=cmnist_iro}"
+: "${IRO_REPO_ROOT:=$HOME/projects/iro}"
+: "${IRO_DATA_ROOT:=$HOME/data/cmnist}"
 : "${IRO_DOWNLOAD:=false}"
 : "${IRO_WORKSPACE_SHARE:=work}"
 : "${IRO_WORKSPACE_DURATION:=7 00:00:00}"
-: "${IRO_EXP_NAME:=cispa_${IRO_EXPERIMENT}}"
+: "${IRO_EXP_NAME:=workspace_${IRO_EXPERIMENT}}"
 : "${IRO_OVERRIDES_FILE:=}"
 : "${IRO_EXTRA_OVERRIDES:=}"
 : "${IRO_RESULTS_ARCHIVE_DIR:=}"
 : "${IRO_ENV_ACTIVATE:=}"
+: "${IRO_READ_ONLY_PREFIX:=}"
 
 if [[ -z "${IRO_SEED:-}" && -n "${SLURM_ARRAY_TASK_ID:-}" ]]; then
   IRO_SEED="${SLURM_ARRAY_TASK_ID}"
 fi
 
-if [[ "${IRO_DATA_ROOT}" == "${HOME}/CISPA-home"* ]]; then
-  echo "ERROR: IRO_DATA_ROOT points to CISPA-home, which is read-only on compute nodes." >&2
-  echo "Set IRO_DATA_ROOT to a writable shared path (for example ~/CISPA-projects/... or ~/CISPA-work/...)." >&2
+if [[ -n "${IRO_READ_ONLY_PREFIX}" && "${IRO_DATA_ROOT}" == "${IRO_READ_ONLY_PREFIX}"* ]]; then
+  echo "ERROR: IRO_DATA_ROOT points to a configured read-only prefix: ${IRO_READ_ONLY_PREFIX}" >&2
+  echo "Set IRO_DATA_ROOT to a writable shared path." >&2
   exit 1
 fi
 

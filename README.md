@@ -3,11 +3,13 @@
 `iro` is a Python library for Imprecise Risk Optimization (IRO), an optimization paradigm which allows users to maintain non-committal generalization preferences during training, providing users with flexibility of choice at test time.
 
 Our framework, at its core, is built upon the ICML 2024 paper [Domain Generalisation via Imprecise Learning](https://arxiv.org/abs/2404.04669) by Anurag Singh, Siu Lun Chau, Shahine Bouabid, and Krikamol Muandet.
+--------
 
 ## Scope
 
-This repository currently supports one experiment route:
+This repository currently supports two experiment routes:
 - `cmnist_iro`
+- `iwildcam_iro`
 
 Supported interfaces:
 - CLI: `iro train`, `iro eval`
@@ -35,6 +37,26 @@ Evaluate a saved CMNIST checkpoint:
 iro eval --experiment cmnist_iro \
   -o eval.checkpoint_path=./iro_exp/ckpts/<run_id>_final.pkl \
   -o eval.split=test \
+  -o eval.alpha=0.8
+```
+
+Run iWildCam-WILDS training (WILDS dataset interface + grouped minibatches):
+
+```bash
+iro train --experiment iwildcam_iro \
+  -o data.root=/path/to/iwildcam_root \
+  -o data.download=false \
+  -o iro.algorithm=iro \
+  -o data.n_envs_per_batch=4 \
+  -o data.iwildcam_eval_split=val,test,id_val,id_test
+```
+
+Evaluate a saved iWildCam checkpoint:
+
+```bash
+iro eval --experiment iwildcam_iro \
+  -o eval.checkpoint_path=./iro_exp/ckpts/<run_id>_best.pkl \
+  -o eval.split=all \
   -o eval.alpha=0.8
 ```
 

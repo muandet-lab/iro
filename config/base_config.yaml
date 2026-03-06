@@ -40,9 +40,18 @@ data:
   source: cmnist
   dataset_name: cmnist
   root: data/cmnist
+  root_dir: ""
+  data_dir: ""
   download: false
   batch_size: 16
   num_workers: 0
+  iwildcam_eval_split: all
+  n_envs_per_batch: 4
+  uniform_over_groups: true
+  debug_data: false
+  debug_train_size: 256
+  debug_eval_size: 128
+  debug_group_limit: 0
   cmnist_train_envs: [0.1, 0.2]
   cmnist_test_envs: [0.9]
   cmnist_test_env_ms: 0.9

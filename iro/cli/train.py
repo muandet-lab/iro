@@ -100,13 +100,37 @@ def register_commands(app: typer.Typer) -> None:
         metrics = result.get("metrics", [])
 
         if isinstance(metrics, list) and metrics:
-            typer.echo(f"dataset={dataset} device={device} split={result.get('split', cfg.eval.split)}")
-            for metric in metrics:
-                env = metric.get("env")
-                alpha = metric.get("alpha")
-                acc = metric.get("acc")
-                loss = metric.get("loss")
-                typer.echo(f"env={env} alpha={alpha} acc={acc:.6f} loss={loss:.6f}")
+            first_metric = metrics[0] if isinstance(metrics[0], dict) else {}
+            if {"env", "acc", "loss"}.issubset(first_metric):
+                typer.echo(f"dataset={dataset} device={device} split={result.get('split', cfg.eval.split)}")
+                for metric in metrics:
+                    env = metric.get("env")
+                    alpha = metric.get("alpha")
+                    acc = metric.get("acc")
+                    loss = metric.get("loss")
+                    typer.echo(f"env={env} alpha={alpha} acc={acc:.6f} loss={loss:.6f}")
+            else:
+                typer.echo(f"dataset={dataset} device={device} split={result.get('split', cfg.eval.split)}")
+                for metric in metrics:
+                    if not isinstance(metric, dict):
+                        typer.echo(str(metric))
+                        continue
+                    split_name = metric.get("split", "unknown")
+                    alpha = metric.get("alpha")
+                    acc = metric.get("accuracy", metric.get("acc"))
+                    macro_recall = metric.get("macro_recall", metric.get("recall-macro_all"))
+                    macro_f1 = metric.get("macro_f1", metric.get("F1-macro_all"))
+
+                    parts = [f"split={split_name}"]
+                    if alpha is not None:
+                        parts.append(f"alpha={alpha}")
+                    if acc is not None:
+                        parts.append(f"acc={float(acc):.6f}")
+                    if macro_recall is not None:
+                        parts.append(f"macro_recall={float(macro_recall):.6f}")
+                    if macro_f1 is not None:
+                        parts.append(f"macro_f1={float(macro_f1):.6f}")
+                    typer.echo(" ".join(parts))
         else:
             typer.echo(f"dataset={dataset} device={device} evaluation_completed")
 

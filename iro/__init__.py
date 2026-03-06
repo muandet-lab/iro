@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from .core import run_evaluation, run_training
 from .iro import ARM_Regression, AggregationFunction, Pareto_distribution, aggregation_function
-from .utility.networks import FHatNetwork, FiLMClassifierHead, FiLMLayer, HyperNetwork
+from .utility.networks import FHatNetwork, FiLMClassifierHead, FiLMLayer, FiLMedResNetClassifier, HyperNetwork
 
 __author__ = "Joseph C. Sheils"
-__email__ = "joseph.sheils@example.com"
+__email__ = "joseph.sheils@cispa.de"
 
 __all__ = [
     "aggregation_function",
@@ -18,6 +18,7 @@ __all__ = [
     "HyperNetwork",
     "FiLMLayer",
     "FiLMClassifierHead",
+    "FiLMedResNetClassifier",
     "run_training",
     "run_evaluation",
 ]
