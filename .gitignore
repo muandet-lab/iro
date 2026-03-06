@@ -222,6 +222,7 @@ iro/data/camelyon17_v1.0/
 # Temporary experiment allowlist: keep only active examples
 config/experiments/*
 !config/experiments/cmnist_iro.yaml
+!config/experiments/iwildcam_iro.yaml
 
 iro/examples/*
 !iro/examples/__init__.py
