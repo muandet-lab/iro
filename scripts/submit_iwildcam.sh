@@ -23,7 +23,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 : "${IRO_SLURM_MEM:=64G}"
 : "${IRO_SLURM_TIME:=12:00:00}"
 
-SBATCH_SCRIPT="${REPO_ROOT}/slurm/iwildcam.sbatch"
+SBATCH_SCRIPT="${REPO_ROOT}/scripts/iwildcam_train_slurm.sbatch"
 if [[ ! -f "${SBATCH_SCRIPT}" ]]; then
   echo "ERROR: missing sbatch script ${SBATCH_SCRIPT}" >&2
   exit 1

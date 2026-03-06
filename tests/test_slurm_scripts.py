@@ -57,7 +57,7 @@ def test_submit_iwildcam_dry_run_lists_required_algorithms() -> None:
     assert "IRO_ALGORITHM=erm" in out
     assert "IRO_ALGORITHM=iro" in out
     assert "IRO_ALGORITHM=groupdro" in out
-    assert "slurm/iwildcam.sbatch" in out
+    assert "scripts/iwildcam_train_slurm.sbatch" in out
 
 
 def test_smoke_iwildcam_fails_when_dataset_missing_and_no_download() -> None:

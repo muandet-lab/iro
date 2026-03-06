@@ -18,7 +18,7 @@ Cluster workflows usually require:
 - `scripts/submit_cmnist_repro_array.sh`
 - `scripts/submit_cmnist_full_grid.sh`
 - `scripts/collect_cmnist_table.py`
-- `slurm/iwildcam.sbatch`
+- `scripts/iwildcam_train_slurm.sbatch`
 - `scripts/submit_iwildcam.sh`
 - `scripts/smoke_iwildcam.sh`
 
