@@ -26,6 +26,10 @@ class FakeSubset:
             x = self.transform(x)
         return x, y, metadata
 
+    @property
+    def metadata_array(self):
+        return self.dataset.metadata_array[self.indices]
+
 
 class FakeGrouper:
     def metadata_to_group(self, metadata):
@@ -214,6 +218,34 @@ def test_build_iwildcam_train_loader_selects_standard_or_group(monkeypatch) -> N
     assert calls[1][0] == "group"
     assert calls[1][2]["n_groups_per_batch"] == 2
     assert calls[1][2]["distinct_groups"] is True
+
+
+def test_build_iwildcam_train_loader_adjusts_groups_for_debug_subset(monkeypatch) -> None:
+    calls = []
+
+    def fake_get_train_loader(loader, dataset, batch_size, **kwargs):
+        calls.append((loader, batch_size, kwargs))
+        return ["loader"]
+
+    monkeypatch.setattr(iwildcam_data, "get_train_loader", fake_get_train_loader)
+    cfg = _cfg(algorithm="iro")
+    cfg.data.batch_size = 32
+    cfg.data.n_envs_per_batch = 4
+    dataset = FakeWildsDataset()
+    train_subset = FakeSubset(dataset, np.array([0, 1, 2, 3, 4]), transform=None)  # groups {0,1,2}
+    bundle = Bundle(
+        dataset=dataset,
+        grouper=FakeGrouper(),
+        train_data=train_subset,
+        eval_data={},
+        eval_splits=(),
+    )
+
+    with pytest.warns(RuntimeWarning, match="Adjusted data.n_envs_per_batch"):
+        iwildcam_data.build_iwildcam_train_loader(cfg, bundle, algorithm="iro")
+
+    assert calls[0][0] == "group"
+    assert calls[0][2]["n_groups_per_batch"] == 2
 
 
 def test_train_iwildcam_uses_group_minibatches_and_dataset_eval(monkeypatch) -> None:

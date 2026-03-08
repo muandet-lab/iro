@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 from typing import Any
 
@@ -192,10 +193,23 @@ def build_iwildcam_train_loader(cfg, bundle: IWildCamDataBundle, *, algorithm: s
     n_groups_per_batch = max(1, int(getattr(cfg.data, "n_envs_per_batch", 1)))
     uniform_over_groups = bool(getattr(cfg.data, "uniform_over_groups", True))
 
-    if batch_size % n_groups_per_batch != 0:
-        raise ValueError(
-            "For WILDS group loaders, data.batch_size must be divisible by data.n_envs_per_batch. "
-            f"Got batch_size={batch_size}, n_envs_per_batch={n_groups_per_batch}."
+    train_group_ids = bundle.grouper.metadata_to_group(bundle.train_data.metadata_array)
+    train_unique_groups = int(torch.unique(train_group_ids).numel())
+    if train_unique_groups < 1:
+        raise ValueError("iWildCam train split has no groups after filtering; cannot construct grouped loader.")
+
+    max_feasible_groups = min(n_groups_per_batch, train_unique_groups)
+    effective_n_groups = next(
+        (k for k in range(max_feasible_groups, 0, -1) if batch_size % k == 0),
+        1,
+    )
+    if effective_n_groups != n_groups_per_batch:
+        warnings.warn(
+            "Adjusted data.n_envs_per_batch for WILDS group loader: "
+            f"requested={n_groups_per_batch}, available_groups={train_unique_groups}, "
+            f"batch_size={batch_size}, using n_groups_per_batch={effective_n_groups}.",
+            RuntimeWarning,
+            stacklevel=2,
         )
 
     return get_train_loader(
@@ -203,7 +217,7 @@ def build_iwildcam_train_loader(cfg, bundle: IWildCamDataBundle, *, algorithm: s
         bundle.train_data,
         batch_size=batch_size,
         grouper=bundle.grouper,
-        n_groups_per_batch=n_groups_per_batch,
+        n_groups_per_batch=effective_n_groups,
         uniform_over_groups=uniform_over_groups,
         distinct_groups=True,
         num_workers=num_workers,
