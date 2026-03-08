@@ -233,7 +233,8 @@ def split_group_batch_to_minibatches(
 ) -> list[tuple[torch.Tensor, torch.Tensor]]:
     """Split one WILDS grouped batch into per-group minibatches for algorithms."""
 
-    group_ids = grouper.metadata_to_group(metadata)
+    # WILDS grouper factors are stored on CPU; compute group ids on CPU metadata.
+    group_ids = grouper.metadata_to_group(metadata.detach().cpu())
     group_to_indices: dict[int, list[int]] = {}
     for idx, group in enumerate(group_ids.tolist()):
         group_to_indices.setdefault(int(group), []).append(idx)
