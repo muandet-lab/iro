@@ -9,8 +9,8 @@ data:
   root_dir: ""
   data_dir: ""
   download: false
-  batch_size: 32
-  num_workers: 4
+  batch_size: 16
+  num_workers: 8
   iwildcam_eval_split: all
   n_envs_per_batch: 4
   uniform_over_groups: true
@@ -18,20 +18,23 @@ data:
   debug_train_size: 256
   debug_eval_size: 128
   debug_group_limit: 0
+  iwildcam_image_size: 448
+  iwildcam_eval_resize: 512
 
 model:
   name: film_resnet18
   hidden_sizes: [256]
   dropout: 0.0
+  pretrained: true
 
 training:
-  steps: 1000
+  steps: 20000
   lr: 1.0e-4
-  weight_decay: 0.0
-  eval_freq: 100
+  weight_decay: 1.0e-4
+  eval_freq: 500
   lr_factor_reduction: 1.0
-  lr_cos_sched: false
-  erm_pretrain_iters: 0
+  lr_cos_sched: true
+  erm_pretrain_iters: 2000
   loss_fn: cross_ent
   deterministic: false
 

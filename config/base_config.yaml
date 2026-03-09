@@ -35,6 +35,7 @@ model:
   name: filmedmlp
   hidden_sizes: [390]
   dropout: 0.2
+  pretrained: false
 
 data:
   source: cmnist
@@ -52,6 +53,8 @@ data:
   debug_train_size: 256
   debug_eval_size: 128
   debug_group_limit: 0
+  iwildcam_image_size: 224
+  iwildcam_eval_resize: 256
   cmnist_train_envs: [0.1, 0.2]
   cmnist_test_envs: [0.9]
   cmnist_test_env_ms: 0.9

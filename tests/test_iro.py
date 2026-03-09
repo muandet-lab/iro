@@ -160,7 +160,12 @@ def test_iwildcam_experiment_config_loads() -> None:
     assert cfg.data.dataset_name == "iwildcam"
     assert cfg.data.iwildcam_eval_split == "all"
     assert cfg.data.n_envs_per_batch == 4
+    assert cfg.data.iwildcam_image_size == 448
+    assert cfg.data.iwildcam_eval_resize == 512
     assert cfg.model.name == "film_resnet18"
+    assert cfg.model.pretrained is True
+    assert cfg.data.batch_size == 16
+    assert cfg.training.steps == 20000
     assert cfg.training.loss_fn == "cross_ent"
 
 

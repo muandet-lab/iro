@@ -18,9 +18,12 @@ set -euo pipefail
 : "${IRO_EVAL_SPLITS:=val,test,id_val,id_test}"
 : "${IRO_N_ENVS_PER_BATCH:=4}"
 : "${IRO_UNIFORM_OVER_GROUPS:=true}"
-: "${IRO_STEPS:=1000}"
-: "${IRO_BATCH_SIZE:=32}"
+: "${IRO_STEPS:=20000}"
+: "${IRO_BATCH_SIZE:=16}"
 : "${IRO_MODEL_NAME:=film_resnet18}"
+: "${IRO_MODEL_PRETRAINED:=true}"
+: "${IRO_IMAGE_SIZE:=448}"
+: "${IRO_EVAL_RESIZE:=512}"
 : "${IRO_EXP_NAME:=iwildcam_${IRO_ALGORITHM}}"
 
 if [[ -z "${IRO_SEED:-}" && -n "${SLURM_ARRAY_TASK_ID:-}" ]]; then
@@ -33,7 +36,7 @@ export IRO_DATA_ROOT
 export IRO_DOWNLOAD
 export IRO_EXP_NAME
 
-base_overrides="iro.algorithm=${IRO_ALGORITHM};model.name=${IRO_MODEL_NAME};training.steps=${IRO_STEPS};data.batch_size=${IRO_BATCH_SIZE};data.iwildcam_eval_split=${IRO_EVAL_SPLITS};data.n_envs_per_batch=${IRO_N_ENVS_PER_BATCH};data.uniform_over_groups=${IRO_UNIFORM_OVER_GROUPS};data.debug_data=${IRO_DEBUG_DATA};data.root_dir=${IRO_DATA_ROOT};data.data_dir=${IRO_DATA_ROOT}"
+base_overrides="iro.algorithm=${IRO_ALGORITHM};model.name=${IRO_MODEL_NAME};model.pretrained=${IRO_MODEL_PRETRAINED};training.steps=${IRO_STEPS};data.batch_size=${IRO_BATCH_SIZE};data.iwildcam_image_size=${IRO_IMAGE_SIZE};data.iwildcam_eval_resize=${IRO_EVAL_RESIZE};data.iwildcam_eval_split=${IRO_EVAL_SPLITS};data.n_envs_per_batch=${IRO_N_ENVS_PER_BATCH};data.uniform_over_groups=${IRO_UNIFORM_OVER_GROUPS};data.debug_data=${IRO_DEBUG_DATA};data.root_dir=${IRO_DATA_ROOT};data.data_dir=${IRO_DATA_ROOT}"
 if [[ -n "${IRO_EXTRA_OVERRIDES:-}" ]]; then
   base_overrides="${base_overrides};${IRO_EXTRA_OVERRIDES}"
 fi

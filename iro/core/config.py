@@ -55,6 +55,7 @@ class ModelConfig:
     name: str = "filmedmlp"
     hidden_sizes: list[int] = field(default_factory=lambda: [390])
     dropout: float = 0.2
+    pretrained: bool = False
 
 
 @dataclass
@@ -74,6 +75,8 @@ class DataConfig:
     debug_train_size: int = 256
     debug_eval_size: int = 128
     debug_group_limit: int = 0
+    iwildcam_image_size: int = 224
+    iwildcam_eval_resize: int = 256
     cmnist_train_envs: list[float] | str = field(default_factory=lambda: [0.1, 0.2])
     cmnist_test_envs: list[float] | str = field(default_factory=lambda: [0.9])
     cmnist_test_env_ms: float = 0.9

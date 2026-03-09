@@ -51,6 +51,10 @@ iro train --experiment iwildcam_iro \
   -o data.root=/path/to/iwildcam_root \
   -o data.download=false \
   -o iro.algorithm=iro \
+  -o model.pretrained=true \
+  -o data.iwildcam_image_size=448 \
+  -o data.iwildcam_eval_resize=512 \
+  -o training.steps=20000 \
   -o data.n_envs_per_batch=4 \
   -o data.iwildcam_eval_split=val,test,id_val,id_test
 ```
@@ -88,6 +92,9 @@ iro eval --experiment iwildcam_iro \
 - `data.n_envs_per_batch=...`
 - `data.uniform_over_groups=true|false`
 - `data.debug_data=true|false`
+- `data.iwildcam_image_size=224|448`
+- `data.iwildcam_eval_resize=256|512`
+- `model.pretrained=true|false`
 
 ## Python API
 

@@ -149,6 +149,7 @@ def _cfg(algorithm: str = "iro"):
             name="film_resnet18",
             hidden_sizes=[16],
             dropout=0.0,
+            pretrained=False,
         ),
         iro=SimpleNamespace(
             algorithm=algorithm,
@@ -171,6 +172,17 @@ def test_parse_iwildcam_eval_splits_variants() -> None:
     assert iwildcam_data.parse_iwildcam_eval_splits(["id_val", "id_test"]) == ("id_val", "id_test")
     with pytest.raises(ValueError, match="Invalid iWildCam split"):
         iwildcam_data.parse_iwildcam_eval_splits("bad_split")
+
+
+def test_iwildcam_transform_size_resolution_from_config() -> None:
+    cfg = _cfg()
+    assert iwildcam_data.resolve_iwildcam_image_size(cfg) == 224
+    assert iwildcam_data.resolve_iwildcam_eval_resize(cfg, image_size=224) == 256
+
+    cfg.data.iwildcam_image_size = 448
+    cfg.data.iwildcam_eval_resize = 512
+    assert iwildcam_data.resolve_iwildcam_image_size(cfg) == 448
+    assert iwildcam_data.resolve_iwildcam_eval_resize(cfg, image_size=448) == 512
 
 
 def test_debug_subsample_and_group_split_helpers(monkeypatch) -> None:

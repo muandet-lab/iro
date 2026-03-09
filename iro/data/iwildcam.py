@@ -17,6 +17,8 @@ from wilds.datasets.wilds_dataset import WILDSSubset
 IWILDCAM_EVAL_SPLITS = ("val", "test", "id_val", "id_test")
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
+DEFAULT_IWILDCAM_IMAGE_SIZE = 224
+DEFAULT_IWILDCAM_EVAL_RESIZE = 256
 
 
 @dataclass
@@ -71,10 +73,23 @@ def resolve_iwildcam_root(*, root: str | None, root_dir: str | None, data_dir: s
     return "data"
 
 
-def iwildcam_train_transform() -> transforms.Compose:
+def resolve_iwildcam_image_size(cfg) -> int:
+    size = int(getattr(cfg.data, "iwildcam_image_size", DEFAULT_IWILDCAM_IMAGE_SIZE))
+    return max(64, size)
+
+
+def resolve_iwildcam_eval_resize(cfg, *, image_size: int) -> int:
+    raw = int(getattr(cfg.data, "iwildcam_eval_resize", 0))
+    if raw > 0:
+        return max(image_size, raw)
+    default_resize = int(round(float(image_size) * (256.0 / 224.0)))
+    return max(image_size, default_resize, DEFAULT_IWILDCAM_EVAL_RESIZE)
+
+
+def iwildcam_train_transform(*, image_size: int = DEFAULT_IWILDCAM_IMAGE_SIZE) -> transforms.Compose:
     return transforms.Compose(
         [
-            transforms.RandomResizedCrop(224),
+            transforms.RandomResizedCrop(int(image_size)),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
@@ -82,11 +97,15 @@ def iwildcam_train_transform() -> transforms.Compose:
     )
 
 
-def iwildcam_eval_transform() -> transforms.Compose:
+def iwildcam_eval_transform(
+    *,
+    image_size: int = DEFAULT_IWILDCAM_IMAGE_SIZE,
+    resize: int = DEFAULT_IWILDCAM_EVAL_RESIZE,
+) -> transforms.Compose:
     return transforms.Compose(
         [
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
+            transforms.Resize(int(resize)),
+            transforms.CenterCrop(int(image_size)),
             transforms.ToTensor(),
             transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
         ]
@@ -136,8 +155,14 @@ def build_iwildcam_data_bundle(cfg) -> IWildCamDataBundle:
 
     eval_splits = parse_iwildcam_eval_splits(getattr(cfg.data, "iwildcam_eval_split", "all"))
 
-    train_data = dataset.get_subset("train", transform=iwildcam_train_transform())
-    eval_data = {split: dataset.get_subset(split, transform=iwildcam_eval_transform()) for split in eval_splits}
+    image_size = resolve_iwildcam_image_size(cfg)
+    eval_resize = resolve_iwildcam_eval_resize(cfg, image_size=image_size)
+
+    train_data = dataset.get_subset("train", transform=iwildcam_train_transform(image_size=image_size))
+    eval_data = {
+        split: dataset.get_subset(split, transform=iwildcam_eval_transform(image_size=image_size, resize=eval_resize))
+        for split in eval_splits
+    }
 
     grouper = CombinatorialGrouper(dataset=dataset, groupby_fields=["location"])
 
@@ -262,9 +287,13 @@ def split_group_batch_to_minibatches(
 
 __all__ = [
     "IWILDCAM_EVAL_SPLITS",
+    "DEFAULT_IWILDCAM_IMAGE_SIZE",
+    "DEFAULT_IWILDCAM_EVAL_RESIZE",
     "IWildCamDataBundle",
     "parse_iwildcam_eval_splits",
     "resolve_iwildcam_root",
+    "resolve_iwildcam_image_size",
+    "resolve_iwildcam_eval_resize",
     "build_iwildcam_data_bundle",
     "build_iwildcam_train_loader",
     "build_iwildcam_eval_loader",

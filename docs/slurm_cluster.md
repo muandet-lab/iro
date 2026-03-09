@@ -130,6 +130,24 @@ IRO_DEBUG_DATA=0 \
 ./scripts/submit_iwildcam.sh
 ```
 
+The iWildCam submit helper defaults are tuned for stronger performance:
+- `IRO_MODEL_PRETRAINED=true`
+- `IRO_IMAGE_SIZE=448`
+- `IRO_EVAL_RESIZE=512`
+- `IRO_BATCH_SIZE=16`
+- `IRO_STEPS=20000`
+
+You can override them per run, for example:
+
+```bash
+IRO_MODEL_PRETRAINED=true \
+IRO_IMAGE_SIZE=448 \
+IRO_EVAL_RESIZE=512 \
+IRO_BATCH_SIZE=16 \
+IRO_STEPS=60000 \
+./scripts/submit_iwildcam.sh
+```
+
 ## iWildCam smoke check
 
 ```bash
