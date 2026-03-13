@@ -16,6 +16,17 @@ except Exception:  # pragma: no cover - optional import
     make_interp_spline = None
 
 
+def _set_plot_style() -> None:
+    """Apply SciencePlots style, falling back to seaborn defaults."""
+
+    try:
+        import scienceplots  # noqa: F401
+
+        plt.style.use(["science", "no-latex", "grid"])
+    except Exception:  # pragma: no cover - optional import
+        sns.set_theme(style="whitegrid", context="talk")
+
+
 def _smooth_xy(x: np.ndarray, y: np.ndarray, *, points: int = 300) -> tuple[np.ndarray, np.ndarray]:
     if make_interp_spline is None:
         return x, y
@@ -49,6 +60,7 @@ def plot_cvar_alpha_curves(
     - ``cvar_std``
     """
 
+    _set_plot_style()
     fig, ax = plt.subplots(figsize=(10, 6))
     colors = {
         "erm": "#1f77b4",
@@ -111,6 +123,7 @@ def plot_alpha_risk_distribution(
 ) -> plt.Figure:
     """Plot DGIL-style risk distributions across alpha values (KDE + colorbar)."""
 
+    _set_plot_style()
     alphas = sorted(alpha_to_risks.keys())
     fig, ax = plt.subplots(figsize=(9, 6))
     cmap = plt.cm.RdBu_r
@@ -142,4 +155,3 @@ def plot_alpha_risk_distribution(
 
 
 __all__ = ["plot_cvar_alpha_curves", "plot_alpha_risk_distribution"]
-
