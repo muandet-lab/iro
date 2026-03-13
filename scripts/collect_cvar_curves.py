@@ -30,13 +30,6 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from iro.core.config import load_experiment_config
-from iro.data.cmnist_dataset import get_cmnist_datasets
-from iro.data.iwildcam import build_iwildcam_data_bundle, build_iwildcam_eval_loader
-from iro.training.train_cmnist import _build_algorithm as _build_cmnist_algorithm
-from iro.training.train_cmnist import _loss_setup as _cmnist_loss_setup
-from iro.training.train_cmnist import _parse_env_spec as _cmnist_parse_env_spec
-from iro.training.train_iwildcam import _build_algorithm as _build_iwildcam_algorithm
-from iro.utility.fast_data_loader import FastDataLoader
 from iro.visualization.cvar_curves import plot_cvar_alpha_curves
 
 SUPPORTED_EXPERIMENTS = ("iwildcam_iro", "cmnist_iro")
@@ -273,6 +266,8 @@ def _iwildcam_group_risks_for_alpha(algorithm, loader, *, grouper, device: str, 
 
 
 def _cmnist_eval_env_setup(cfg, split: str) -> tuple[tuple[float, ...], bool]:
+    from iro.training.train_cmnist import _parse_env_spec as _cmnist_parse_env_spec
+
     normalized = split.lower().strip()
     if normalized == "all":
         return tuple(i / 10.0 for i in range(11)), True
@@ -285,7 +280,7 @@ def _cmnist_eval_env_setup(cfg, split: str) -> tuple[tuple[float, ...], bool]:
 
 def _cmnist_env_risks_for_alpha(
     algorithm,
-    loaders: list[FastDataLoader],
+    loaders: list[Any],
     *,
     device: str,
     loss_name: str,
@@ -325,6 +320,17 @@ def _evaluate_selected_iwildcam(
     num_workers: int,
     device: str,
 ) -> pd.DataFrame:
+    try:
+        from iro.data.iwildcam import build_iwildcam_data_bundle, build_iwildcam_eval_loader
+        from iro.training.train_iwildcam import _build_algorithm as _build_iwildcam_algorithm
+    except ModuleNotFoundError as exc:
+        if getattr(exc, "name", "") == "wilds":
+            raise ModuleNotFoundError(
+                "Missing dependency 'wilds' required for iWildCam CVaR collection. "
+                "Install with `python -m pip install wilds` (or `python -m pip install -e .`)."
+            ) from exc
+        raise
+
     rows: list[dict[str, Any]] = []
     for sel in selected_runs:
         if not sel.checkpoint_path.exists():
@@ -401,6 +407,11 @@ def _evaluate_selected_cmnist(
     num_workers: int,
     device: str,
 ) -> pd.DataFrame:
+    from iro.data.cmnist_dataset import get_cmnist_datasets
+    from iro.training.train_cmnist import _build_algorithm as _build_cmnist_algorithm
+    from iro.training.train_cmnist import _loss_setup as _cmnist_loss_setup
+    from iro.utility.fast_data_loader import FastDataLoader
+
     rows: list[dict[str, Any]] = []
     for sel in selected_runs:
         if not sel.checkpoint_path.exists():
@@ -660,4 +671,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
