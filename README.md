@@ -47,6 +47,7 @@ iro train --experiment iwildcam_iro \
   -o data.root=/path/to/iwildcam_root \
   -o data.download=false \
   -o iro.algorithm=iro \
+  -o model.name=film_resnet50 \
   -o model.pretrained=true \
   -o data.iwildcam_image_size=448 \
   -o data.iwildcam_eval_resize=512 \
@@ -62,6 +63,18 @@ iro eval --experiment iwildcam_iro \
   -o eval.checkpoint_path=./iro_exp/ckpts/<run_id>_best.pkl \
   -o eval.split=all \
   -o eval.alpha=0.8
+```
+
+Collect iWildCam CVaR curves for `erm`, `groupdro`, `iro`:
+
+```bash
+python scripts/collect_cvar_curves.py \
+  /path/to/iro/runs/iwildcam_long/results \
+  --experiment iwildcam_iro \
+  --data-root /path/to/iwildcam_root \
+  --output-dir /path/to/iro/collected_results/iwildcam_cvar \
+  --split val \
+  --algorithms erm,groupdro,iro
 ```
 
 ## Python API

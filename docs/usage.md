@@ -51,6 +51,7 @@ iro train --experiment iwildcam_iro \
   -o data.root=/path/to/iwildcam_root \
   -o data.download=false \
   -o iro.algorithm=iro \
+  -o model.name=film_resnet50 \
   -o model.pretrained=true \
   -o data.iwildcam_image_size=448 \
   -o data.iwildcam_eval_resize=512 \
@@ -78,6 +79,30 @@ iro eval --experiment iwildcam_iro \
   -o eval.alpha=0.8
 ```
 
+Collect Figure-2-style CVaR curves on iWildCam (ERM/GroupDRO/IRO):
+
+```bash
+python scripts/collect_cvar_curves.py \
+  $HOME/CISPA-scratch/c01josh/iro/runs/iwildcam_long/results \
+  --experiment iwildcam_iro \
+  --data-root $HOME/CISPA-scratch/c01josh/datasets/iwildcam \
+  --output-dir $HOME/CISPA-scratch/c01josh/iro/collected_results/iwildcam_cvar \
+  --split val \
+  --algorithms erm,groupdro,iro \
+  --alpha-grid 0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0
+```
+
+The same collector is experiment-agnostic. Example for CMNIST:
+
+```bash
+python scripts/collect_cvar_curves.py \
+  /path/to/cmnist/results \
+  --experiment cmnist_iro \
+  --data-root /path/to/cmnist_root \
+  --split all \
+  --algorithms erm,groupdro,iro
+```
+
 ## Common Overrides
 
 - `training.steps=...`
@@ -94,6 +119,7 @@ iro eval --experiment iwildcam_iro \
 - `data.debug_data=true|false`
 - `data.iwildcam_image_size=224|448`
 - `data.iwildcam_eval_resize=256|512`
+- `model.name=film_resnet18|film_resnet50`
 - `model.pretrained=true|false`
 
 ## Python API

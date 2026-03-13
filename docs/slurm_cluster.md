@@ -130,7 +130,34 @@ IRO_DEBUG_DATA=0 \
 ./scripts/submit_iwildcam.sh
 ```
 
+Submit all three algorithms (`erm`, `groupdro`, `iro`) in one command:
+
+```bash
+cd /path/to/iro
+DRY_RUN=0 \
+ARRAY_RANGE=0-4 \
+IRO_REPO_ROOT=$HOME/CISPA-scratch/c01josh/iro \
+IRO_DATA_ROOT=$HOME/CISPA-scratch/c01josh/datasets/iwildcam \
+IRO_DOWNLOAD=false \
+IRO_ENV_ACTIVATE=$HOME/CISPA-scratch/c01josh/iro/activate_iro_env.sh \
+IRO_ALGORITHMS=erm,groupdro,iro \
+IRO_DEBUG_DATA=0 \
+IRO_STEPS=20000 \
+IRO_BATCH_SIZE=16 \
+IRO_N_ENVS_PER_BATCH=4 \
+IRO_EVAL_SPLITS=val \
+IRO_SLURM_PARTITION=gpu \
+IRO_SLURM_GRES=gpu:A100:1 \
+IRO_SLURM_CPUS_PER_TASK=8 \
+IRO_SLURM_MEM=0 \
+IRO_SLURM_TIME=23:00:00 \
+IRO_EXP_NAME_PREFIX=iwildcam_long \
+IRO_EXTRA_OVERRIDES="training.eval_freq=500;training.output_root=$HOME/CISPA-scratch/c01josh/iro/runs/iwildcam_long" \
+./scripts/submit_iwildcam.sh
+```
+
 The iWildCam submit helper defaults are tuned for stronger performance:
+- `IRO_MODEL_NAME=film_resnet50`
 - `IRO_MODEL_PRETRAINED=true`
 - `IRO_IMAGE_SIZE=448`
 - `IRO_EVAL_RESIZE=512`
@@ -155,4 +182,19 @@ cd /path/to/iro
 IRO_DATA_ROOT=$HOME/data/iwildcam \
 IRO_DOWNLOAD=false \
 ./scripts/smoke_iwildcam.sh
+```
+
+## iWildCam CVaR curve collection
+
+After runs complete, build CVaR-vs-alpha curves (Figure-2 style):
+
+```bash
+python scripts/collect_cvar_curves.py \
+  $HOME/CISPA-scratch/c01josh/iro/runs/iwildcam_long/results \
+  --experiment iwildcam_iro \
+  --data-root $HOME/CISPA-scratch/c01josh/datasets/iwildcam \
+  --output-dir $HOME/CISPA-scratch/c01josh/iro/collected_results/iwildcam_cvar \
+  --split val \
+  --algorithms erm,groupdro,iro \
+  --alpha-grid 0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0
 ```
