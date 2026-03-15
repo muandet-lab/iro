@@ -22,7 +22,7 @@ data:
   iwildcam_eval_resize: 512
 
 model:
-  name: film_resnet18
+  name: film_resnet50
   hidden_sizes: [256]
   dropout: 0.0
   pretrained: true

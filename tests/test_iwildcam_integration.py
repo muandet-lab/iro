@@ -185,6 +185,27 @@ def test_iwildcam_transform_size_resolution_from_config() -> None:
     assert iwildcam_data.resolve_iwildcam_eval_resize(cfg, image_size=448) == 512
 
 
+def test_build_network_supports_resnet18_and_resnet50(monkeypatch) -> None:
+    calls = []
+
+    def fake_model(**kwargs):
+        calls.append(kwargs)
+        return TinyNet()
+
+    monkeypatch.setattr(iwildcam_train.networks, "FiLMedResNetClassifier", fake_model)
+
+    cfg18 = _cfg()
+    cfg18.model.name = "film_resnet18"
+    iwildcam_train._build_network(cfg18, n_classes=3)
+
+    cfg50 = _cfg()
+    cfg50.model.name = "film_resnet50"
+    iwildcam_train._build_network(cfg50, n_classes=3)
+
+    assert calls[0]["backbone_name"] == "resnet18"
+    assert calls[1]["backbone_name"] == "resnet50"
+
+
 def test_debug_subsample_and_group_split_helpers(monkeypatch) -> None:
     monkeypatch.setattr(iwildcam_data, "WILDSSubset", FakeSubset)
     dataset = FakeWildsDataset()

@@ -12,7 +12,7 @@ from collections.abc import Sequence
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision.models import ResNet18_Weights, resnet18
+from torchvision.models import ResNet18_Weights, ResNet50_Weights, resnet18, resnet50
 
 
 class FHatNetwork(nn.Module):
@@ -253,7 +253,7 @@ class CNN(nn.Module):
 
 
 class FiLMedResNetClassifier(nn.Module):
-    """ResNet-18 classifier with optional FiLM modulation of pooled features."""
+    """ResNet classifier with optional FiLM modulation of pooled features."""
 
     def __init__(
         self,
@@ -261,10 +261,18 @@ class FiLMedResNetClassifier(nn.Module):
         *,
         pretrained: bool = False,
         film_hidden_sizes: Sequence[int] | None = None,
+        backbone_name: str = "resnet18",
     ):
         super().__init__()
-        weights = ResNet18_Weights.IMAGENET1K_V1 if pretrained else None
-        backbone = resnet18(weights=weights)
+        backbone_key = str(backbone_name).lower()
+        if backbone_key == "resnet18":
+            weights = ResNet18_Weights.IMAGENET1K_V1 if pretrained else None
+            backbone = resnet18(weights=weights)
+        elif backbone_key == "resnet50":
+            weights = ResNet50_Weights.IMAGENET1K_V2 if pretrained else None
+            backbone = resnet50(weights=weights)
+        else:
+            raise ValueError(f"Unsupported FiLMedResNet backbone '{backbone_name}'.")
         self.feature_extractor = nn.Sequential(*list(backbone.children())[:-1])
         self.feature_dim = int(backbone.fc.in_features)
         self.film = FiLMLayer(

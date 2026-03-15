@@ -63,7 +63,7 @@ def _algorithm_hparams(cfg, *, steps: int) -> dict:
 
 
 def _build_network(cfg, *, n_classes: int):
-    net_name = str(_cfg_get(cfg.model, "name", "film_resnet18")).lower()
+    net_name = str(_cfg_get(cfg.model, "name", "film_resnet50")).lower()
     hidden_sizes = list(_cfg_get(cfg.model, "hidden_sizes", [256]) or [256])
     pretrained = bool(_cfg_get(cfg.model, "pretrained", False))
 
@@ -72,6 +72,15 @@ def _build_network(cfg, *, n_classes: int):
             num_classes=n_classes,
             pretrained=pretrained,
             film_hidden_sizes=hidden_sizes,
+            backbone_name="resnet18",
+        )
+
+    if net_name in {"film_resnet50", "resnet50_film", "film_resnet_50"}:
+        return networks.FiLMedResNetClassifier(
+            num_classes=n_classes,
+            pretrained=pretrained,
+            film_hidden_sizes=hidden_sizes,
+            backbone_name="resnet50",
         )
 
     if net_name in {"resnet18", "resnet"}:
@@ -79,6 +88,15 @@ def _build_network(cfg, *, n_classes: int):
             num_classes=n_classes,
             pretrained=pretrained,
             film_hidden_sizes=hidden_sizes,
+            backbone_name="resnet18",
+        )
+
+    if net_name in {"resnet50"}:
+        return networks.FiLMedResNetClassifier(
+            num_classes=n_classes,
+            pretrained=pretrained,
+            film_hidden_sizes=hidden_sizes,
+            backbone_name="resnet50",
         )
 
     raise NotImplementedError(f"Unsupported iWildCam model '{cfg.model.name}'.")
