@@ -1,7 +1,5 @@
 # Code adopted from https://github.com/facebookresearch/DomainBed/blob/main/domainbed/algorithms.py
 
-import copy
-
 import numpy as np
 import torch
 import torch.autograd as autograd
@@ -427,27 +425,32 @@ class Inftask(ERM):
                 lr=lr_,
                 weight_decay=self.hparams['weight_decay'])
 
-        
-        
-        alphas = np.random.beta(1.0, 1.0, size=5)
+        n_alpha = max(1, int(self.hparams.get("alpha_samples", 5)))
+        alphas = np.random.beta(1.0, 1.0, size=n_alpha)
         alphas = torch.tensor(alphas, dtype=torch.float32).to(self.device)
-        loss = torch.mean(torch.stack([self.compute_cvar_h(alpha, minibatches) for alpha in alphas]))
-        
-        # Rescale gradients if using erm init/pretraining
-        if self.hparams['erm_pretrain_iters'] > 0:
-            if self.grad_ratio is None:
-                self.optimizer.zero_grad()
-                loss.backward(retain_graph=True)
-                self.grad_ratio = get_grad_norm(self.network) / self.erm_grad_norm
-            loss = loss / self.grad_ratio
 
-        # Step
+        # Rescale gradients if using erm init/pretraining.
+        if self.hparams['erm_pretrain_iters'] > 0 and self.grad_ratio is None:
+            probe = self.compute_cvar_h(alphas[0], minibatches)
+            self.optimizer.zero_grad()
+            probe.backward()
+            denom = float(self.erm_grad_norm) if float(self.erm_grad_norm) > 0 else 1.0
+            self.grad_ratio = max(get_grad_norm(self.network) / denom, 1e-12)
+
+        # Memory-efficient objective accumulation across alpha samples.
         self.optimizer.zero_grad()
-        loss.backward()
+        loss_value = 0.0
+        scale = 1.0 / float(n_alpha)
+        for alpha in alphas:
+            term = self.compute_cvar_h(alpha, minibatches)
+            if self.hparams['erm_pretrain_iters'] > 0 and self.grad_ratio is not None:
+                term = term / self.grad_ratio
+            (term * scale).backward()
+            loss_value += float(term.detach().cpu().item()) * scale
         self.optimizer.step()
 
         self.update_count += 1
-        return {'loss': loss.item()}
+        return {'loss': float(loss_value)}
     
     def predict(self, x, alpha):
         return self.network(x, alpha)
@@ -488,29 +491,37 @@ class IRO(ERM):
                 lr=lr_,
                 weight_decay=self.hparams['weight_decay'])
 
-        
+        n_alpha = max(1, int(self.hparams.get("alpha_samples", 10)))
+        pareto_num_samples = max(1, int(self.hparams.get("pareto_num_samples", 5)))
+
         # Avoid deep-copying large backbones (e.g., ResNet-50), which doubles
         # memory footprint and can trigger OOM in the Pareto update.
-        a, b = self.pareto_dist.update(self.network, minibatches)
-        alphas = np.random.beta(a, b, size=10)
+        a, b = self.pareto_dist.update(self.network, minibatches, num_samples=pareto_num_samples)
+        alphas = np.random.beta(a, b, size=n_alpha)
         alphas = torch.tensor(alphas, dtype=torch.float32).to(self.device)
-        loss = torch.mean(torch.stack([self.compute_cvar_h(alpha, minibatches) for alpha in alphas]))
-        
-        # Rescale gradients if using erm init/pretraining
-        if self.hparams['erm_pretrain_iters'] > 0:
-            if self.grad_ratio is None:
-                self.optimizer.zero_grad()
-                loss.backward(retain_graph=True)
-                self.grad_ratio = get_grad_norm(self.network) / self.erm_grad_norm
-            loss = loss / self.grad_ratio
 
-        # Step
+        # Rescale gradients if using erm init/pretraining.
+        if self.hparams['erm_pretrain_iters'] > 0 and self.grad_ratio is None:
+            probe = self.compute_cvar_h(alphas[0], minibatches)
+            self.optimizer.zero_grad()
+            probe.backward()
+            denom = float(self.erm_grad_norm) if float(self.erm_grad_norm) > 0 else 1.0
+            self.grad_ratio = max(get_grad_norm(self.network) / denom, 1e-12)
+
+        # Memory-efficient objective accumulation across alpha samples.
         self.optimizer.zero_grad()
-        loss.backward()
+        loss_value = 0.0
+        scale = 1.0 / float(n_alpha)
+        for alpha in alphas:
+            term = self.compute_cvar_h(alpha, minibatches)
+            if self.hparams['erm_pretrain_iters'] > 0 and self.grad_ratio is not None:
+                term = term / self.grad_ratio
+            (term * scale).backward()
+            loss_value += float(term.detach().cpu().item()) * scale
         self.optimizer.step()
 
         self.update_count += 1
-        return {'loss': loss.item()}
+        return {'loss': float(loss_value)}
     
     def predict(self, x, alpha):
         return self.network(x, alpha)

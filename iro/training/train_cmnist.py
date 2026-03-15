@@ -87,6 +87,8 @@ def _algorithm_hparams(cfg, *, steps: int) -> dict:
         "algorithm": str(_cfg_get(cfg.iro, "algorithm", "iro")).lower(),
         "penalty_weight": float(_cfg_get(cfg.iro, "penalty_weight", 1000.0)),
         "alpha": float(_cfg_get(cfg.iro, "alpha", 0.8)),
+        "alpha_samples": int(_cfg_get(cfg.iro, "alpha_samples", 10)),
+        "pareto_num_samples": int(_cfg_get(cfg.iro, "pareto_num_samples", 5)),
         "groupdro_eta": float(_cfg_get(cfg.iro, "groupdro_eta", 1.0)),
         "lr_factor_reduction": float(_cfg_get(cfg.training, "lr_factor_reduction", 1.0)),
         "lr_cos_sched": bool(_cfg_get(cfg.training, "lr_cos_sched", False)),

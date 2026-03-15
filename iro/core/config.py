@@ -48,6 +48,8 @@ class IROConfig:
     penalty_weight: float = 1000.0
     groupdro_eta: float = 1.0
     alpha: float = 0.8
+    alpha_samples: int = 10
+    pareto_num_samples: int = 5
 
 
 @dataclass

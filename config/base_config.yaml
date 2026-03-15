@@ -30,6 +30,8 @@ iro:
   penalty_weight: 1000.0
   groupdro_eta: 1.0
   alpha: 0.8
+  alpha_samples: 10
+  pareto_num_samples: 5
 
 model:
   name: filmedmlp

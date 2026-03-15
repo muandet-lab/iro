@@ -223,8 +223,8 @@ class Pareto_distribution:
         cvar_estimates = torch.stack(cvar_estimates)
         average_cvar = torch.mean(cvar_estimates)
         return average_cvar
-    def update(self, model, minibatches):
-        avg_cvar = self.aggregated_objective(model, minibatches)
+    def update(self, model, minibatches, num_samples=5):
+        avg_cvar = self.aggregated_objective(model, minibatches, num_samples=max(1, int(num_samples)))
         params = [p for p in model.parameters()]
         grads = torch.autograd.grad(
             avg_cvar,
