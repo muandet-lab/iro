@@ -489,7 +489,9 @@ class IRO(ERM):
                 weight_decay=self.hparams['weight_decay'])
 
         
-        a, b = self.pareto_dist.update(copy.deepcopy(self.network), minibatches)
+        # Avoid deep-copying large backbones (e.g., ResNet-50), which doubles
+        # memory footprint and can trigger OOM in the Pareto update.
+        a, b = self.pareto_dist.update(self.network, minibatches)
         alphas = np.random.beta(a, b, size=10)
         alphas = torch.tensor(alphas, dtype=torch.float32).to(self.device)
         loss = torch.mean(torch.stack([self.compute_cvar_h(alpha, minibatches) for alpha in alphas]))

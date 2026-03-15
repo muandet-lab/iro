@@ -226,12 +226,25 @@ class Pareto_distribution:
     def update(self, model, minibatches):
         avg_cvar = self.aggregated_objective(model, minibatches)
         params = [p for p in model.parameters()]
-        grads = torch.autograd.grad(avg_cvar, params, retain_graph=True, create_graph=True)[0]
+        grads = torch.autograd.grad(
+            avg_cvar,
+            params,
+            retain_graph=True,
+            create_graph=True,
+            allow_unused=True,
+        )
         grad_norms = [torch.norm(grad, p=2) for grad in grads if grad is not None]
+        if not grad_norms:
+            return self.dist_param.detach().cpu().numpy()
+
         total_norm = torch.norm(torch.stack(grad_norms), p=2)
-        obj_grad = torch.autograd.grad(total_norm, self.dist_param)[0]
-        # Adjust distribution parameters based on accumulated gradients
-        self.dist_param = self.dist_param - 0.000001 * obj_grad
+        obj_grad = torch.autograd.grad(total_norm, self.dist_param, allow_unused=True)[0]
+        if obj_grad is None:
+            return self.dist_param.detach().cpu().numpy()
+
+        # Adjust distribution parameters based on accumulated gradients.
+        updated = self.dist_param - 0.000001 * obj_grad
+        self.dist_param = updated.detach().requires_grad_(True)
         return self.dist_param.detach().cpu().numpy()
 
 
